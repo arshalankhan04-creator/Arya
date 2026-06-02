@@ -1,0 +1,38 @@
+export const testimonials = [
+  {
+    id: 1,
+    name: "Priya Sharma",
+    location: "Mumbai",
+    rating: 5,
+    text: "I ordered a custom bridal set for my wedding and it was absolutely breathtaking. The craftsmanship is unmatched. Every guest complimented my jewellery.",
+    avatar: "https://i.pravatar.cc/100?img=47",
+    product: "Sapphire Halo Ring",
+  },
+  {
+    id: 2,
+    name: "Anika Mehra",
+    location: "Delhi",
+    rating: 5,
+    text: "The pearl drop earrings I purchased are even more stunning in person. Packaging was luxurious and delivery was fast. Will definitely shop again.",
+    avatar: "https://i.pravatar.cc/100?img=48",
+    product: "Pearl Drop Earrings",
+  },
+  {
+    id: 3,
+    name: "Sunita Kapoor",
+    location: "Bangalore",
+    rating: 5,
+    text: "Arya Collections has become my go-to for gifting. My mother loved the gold bangle set. The quality is genuinely premium and the price is very fair.",
+    avatar: "https://i.pravatar.cc/100?img=49",
+    product: "Gold Bangle Set",
+  },
+  {
+    id: 4,
+    name: "Riya Patel",
+    location: "Ahmedabad",
+    rating: 5,
+    text: "Bought the layered chain necklace and I wear it every single day. It's held up beautifully. The rose gold colour is exactly as shown.",
+    avatar: "https://i.pravatar.cc/100?img=50",
+    product: "Layered Chain Necklace",
+  },
+];

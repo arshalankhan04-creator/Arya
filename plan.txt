@@ -1,0 +1,229 @@
+Tech Stack
+React + Vite
+Tailwind CSS
+React Router DOM
+Framer Motion
+Lucide React (icons)
+Swiper.js (product sliders)
+Zustand (optional state management for cart/wishlist)
+
+
+Folder structure.
+src/
+│
+├── assets/
+│   ├── images/
+│   ├── icons/
+│   └── videos/
+│
+├── components/
+│   ├── layout/
+│   │   ├── Navbar.jsx
+│   │   ├── Footer.jsx
+│   │   └── AnnouncementBar.jsx
+│   │
+│   ├── home/
+│   │   ├── Hero.jsx
+│   │   ├── Categories.jsx
+│   │   ├── FeaturedProducts.jsx
+│   │   ├── Collections.jsx
+│   │   ├── Testimonials.jsx
+│   │   └── InstagramGallery.jsx
+│   │
+│   ├── product/
+│   │   ├── ProductCard.jsx
+│   │   ├── ProductGrid.jsx
+│   │   ├── ProductGallery.jsx
+│   │   └── ProductInfo.jsx
+│   │
+│   └── ui/
+│       ├── Button.jsx
+│       ├── Badge.jsx
+│       ├── Modal.jsx
+│       └── Loader.jsx
+│
+├── pages/
+│   ├── Home.jsx
+│   ├── Shop.jsx
+│   ├── ProductDetails.jsx
+│   ├── Wishlist.jsx
+│   ├── Cart.jsx
+│   ├── About.jsx
+│   ├── Contact.jsx
+│   └── NotFound.jsx
+│
+├── data/
+│   ├── products.js
+│   ├── categories.js
+│   └── testimonials.js
+│
+├── routes/
+│   └── AppRoutes.jsx
+│
+├── context/
+│   ├── CartContext.jsx
+│   └── WishlistContext.jsx
+│
+├── hooks/
+│
+├── utils/
+│
+├── App.jsx
+└── main.jsx
+
+Development Phases
+Phase 1 - Foundation
+Create
+Navbar
+Footer
+Routing
+Global Layout
+Mobile Menu
+
+Pages:
+
+Home
+Shop
+Product Details
+Wishlist
+Cart
+
+Goal:
+✔ Navigation fully working
+
+Phase 2 - Home Page
+Hero Section
+
+Large luxury jewellery banner
+
+Content:
+
+Luxury headline
+Short description
+Shop Now button
+Categories
+
+4-6 cards
+
+Example:
+
+Rings
+Necklaces
+Earrings
+Bracelets
+Wedding Collection
+Premium Collection
+Featured Products
+
+Product cards
+
+Collection Banner
+
+Large premium section
+
+Testimonials
+
+Customer reviews
+
+Instagram Section
+
+Lifestyle jewellery images
+
+Goal:
+✔ Home page complete
+
+Phase 3 - Shop Page
+Filters UI
+
+Frontend only
+
+Category
+Price Range
+Material
+Sort By
+Product Grid
+
+12-20 dummy products
+
+Search Bar
+
+Frontend filtering only
+
+Goal:
+✔ Shopping experience complete
+
+Phase 4 - Product Details
+Product Gallery
+
+Multiple images
+
+Product Info
+Name
+Price
+Description
+Material
+Size
+Actions
+Add To Cart
+Add To Wishlist
+Related Products
+
+4 products
+
+Goal:
+✔ Product page complete
+
+Phase 5 - Wishlist & Cart
+Wishlist
+Save products
+Remove products
+Cart
+Quantity controls
+Price summary
+Fake checkout button
+
+Goal:
+✔ Full frontend flow working
+
+Phase 6 - Polish
+Animations
+
+Framer Motion
+
+Hero reveal
+Product card hover
+Scroll animations
+Page transitions
+UX
+Skeleton loaders
+Empty states
+Toast messages
+Back-to-top button
+
+Goal:
+✔ Premium feel
+
+Dummy Data Strategy
+
+Abhi backend nahi hai, isliye data/products.js me 20-30 products rakho:
+
+{
+  id: 1,
+  name: "Diamond Ring",
+  price: 12999,
+  category: "Rings",
+  image: "...",
+  description: "..."
+}
+
+Saara project isi dummy data se chalao.
+
+Priority Order
+Layout (Navbar/Footer)
+Routing
+Home Page
+Shop Page
+Product Details
+Wishlist
+Cart
+Animations & Polish

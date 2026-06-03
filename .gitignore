@@ -22,3 +22,14 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Personal / internal files — not for the repository
+For me/
+plan.txt
+public/Aboutpagemainimage.png
+
+# Environment / secrets (belt-and-suspenders)
+.env
+.env.*
+*.pem
+*.key

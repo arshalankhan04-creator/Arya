@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Heart, ShoppingBag, ArrowUpRight, ChevronLeft, Shield, RefreshCw, Truck, Award } from "lucide-react";
+import { Heart, ShoppingBag, ArrowUpRight, Shield, RefreshCw, Truck, Award } from "lucide-react";
 import { products } from "../data/products";
 import { useCart } from "../context/CartContext";
 import { useWishlist } from "../context/WishlistContext";
 import ProductCard from "../components/product/ProductCard";
+import SuggestionsGrid from "../components/ui/SuggestionsGrid";
 
 /* ── promise strip items ─────────────────────────────── */
 const PROMISES = [
@@ -61,7 +62,6 @@ function Accordion({ title, children }) {
 /* ── main page ───────────────────────────────────────── */
 export default function ProductDetails() {
   const { id }       = useParams();
-  const navigate     = useNavigate();
   const { addToCart }            = useCart();
   const { toggleWishlist, isWishlisted } = useWishlist();
 
@@ -74,9 +74,6 @@ export default function ProductDetails() {
 
   /* reset image index when product changes */
   useEffect(() => { setActiveImg(0); }, [id]);
-
-  /* scroll to top */
-  useEffect(() => { window.scrollTo({ top: 0, behavior: "smooth" }); }, [id]);
 
   if (!product) {
     return (
@@ -317,48 +314,7 @@ export default function ProductDetails() {
       {/* ══════════════════════════════════════════════
           YOU MAY ALSO LIKE — related products
       ══════════════════════════════════════════════ */}
-      {related.length > 0 && (
-        <div style={{ backgroundColor: "#F0EAE2", padding: "80px 0" }}>
-          <div style={{ maxWidth: "1320px", margin: "0 auto", padding: "0 48px" }}>
-
-            {/* Section header */}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "40px" }}>
-              <div>
-                <p style={{ fontFamily: "Inter, sans-serif", fontSize: "8px", letterSpacing: "0.42em", textTransform: "uppercase", color: "#B76E79", marginBottom: "10px" }}>
-                  Complete the Look
-                </p>
-                <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "clamp(28px, 3vw, 40px)", fontWeight: 300, color: "#1A1410", lineHeight: 1.1 }}>
-                  You May Also Like
-                </h2>
-              </div>
-              <Link
-                to="/shop"
-                style={{ display: "inline-flex", alignItems: "center", gap: "6px", fontFamily: "Inter, sans-serif", fontSize: "9px", letterSpacing: "0.22em", textTransform: "uppercase", color: "#B76E79", textDecoration: "none", transition: "gap 0.2s" }}
-                onMouseEnter={e => e.currentTarget.style.gap = "10px"}
-                onMouseLeave={e => e.currentTarget.style.gap = "6px"}
-              >
-                View All <ArrowUpRight size={12} />
-              </Link>
-            </div>
-
-            {/* Related grid */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "3px" }}>
-              {related.map((p, i) => (
-                <motion.div
-                  key={p.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: i * 0.1 }}
-                  style={{ height: "380px" }}
-                >
-                  <ProductCard product={p} />
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
+      <SuggestionsGrid products={related} eyebrow="Complete the Look" title="You May Also Like" cardHeight={380} />
 
     </div>
   );

@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Heart, ShoppingBag, X, ArrowUpRight, Sparkles } from "lucide-react";
+import { Heart, ShoppingBag, X, ArrowUpRight } from "lucide-react";
 import { useWishlist } from "../context/WishlistContext";
 import { useCart } from "../context/CartContext";
 import { products } from "../data/products";
 import ProductCard from "../components/product/ProductCard";
+import PageHeader from "../components/ui/PageHeader";
+import SuggestionsGrid from "../components/ui/SuggestionsGrid";
 
 /* ── wishlist item card ──────────────────────────────── */
 function WishlistCard({ item, onRemove, onAddToCart, justAdded }) {
@@ -183,21 +185,7 @@ export default function Wishlist() {
           </Link>
         </div>
 
-        {suggestions.length > 0 && (
-          <div style={{ backgroundColor: "#F0EAE2", padding: "64px 0" }}>
-            <div style={{ maxWidth: "1320px", margin: "0 auto", padding: "0 48px" }}>
-              <p style={{ fontFamily: "Inter, sans-serif", fontSize: "8px", letterSpacing: "0.42em", textTransform: "uppercase", color: "#B76E79", marginBottom: "10px" }}>You Might Love</p>
-              <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "36px", fontWeight: 300, color: "#1A1410", marginBottom: "32px" }}>Start Your Wishlist</h2>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "3px" }}>
-                {suggestions.map((p, i) => (
-                  <motion.div key={p.id} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} style={{ height: "360px" }}>
-                    <ProductCard product={p} />
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
+        <SuggestionsGrid products={suggestions} eyebrow="You Might Love" title="Start Your Wishlist" />
       </div>
     );
   }
@@ -207,36 +195,30 @@ export default function Wishlist() {
     <div style={{ backgroundColor: "#FAF7F2", minHeight: "100vh" }}>
 
       {/* Header */}
-      <div style={{ backgroundColor: "#1A1410", padding: "100px 48px 48px", position: "relative", overflow: "hidden" }}>
-        {/* Ghost watermark */}
-        <div style={{ position: "absolute", top: "50%", right: "4%", transform: "translateY(-50%)", fontFamily: "'Cormorant Garamond', serif", fontSize: "clamp(80px, 12vw, 150px)", fontWeight: 300, color: "rgba(255,255,255,0.03)", lineHeight: 1, userSelect: "none", letterSpacing: "-0.04em", whiteSpace: "nowrap" }}>
-          Wishlist
-        </div>
-        <div style={{ maxWidth: "1320px", margin: "0 auto", position: "relative", zIndex: 1 }}>
-          <p style={{ fontFamily: "Inter, sans-serif", fontSize: "8px", letterSpacing: "0.42em", textTransform: "uppercase", color: "#B76E79", marginBottom: "14px" }}>Saved Pieces</p>
-          <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", flexWrap: "wrap", gap: "16px" }}>
-            <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "clamp(38px, 5vw, 60px)", fontWeight: 300, color: "#FAF7F2", lineHeight: 1 }}>
-              Your Wishlist
-            </h1>
-            <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-              <span style={{ fontFamily: "Inter, sans-serif", fontSize: "12px", color: "rgba(250,247,242,0.4)" }}>
-                {wishlist.length} {wishlist.length === 1 ? "piece" : "pieces"}
-              </span>
-              {wishlist.length > 1 && (
-                <motion.button
-                  whileTap={{ scale: 0.97 }}
-                  onClick={handleAddAll}
-                  style={{ display: "inline-flex", alignItems: "center", gap: "8px", backgroundColor: "rgba(183,110,121,0.15)", border: "1px solid rgba(183,110,121,0.4)", color: "#D4A0A7", padding: "10px 20px", fontFamily: "Inter, sans-serif", fontSize: "9px", letterSpacing: "0.22em", textTransform: "uppercase", cursor: "pointer", transition: "all 0.25s" }}
-                  onMouseEnter={e => { e.currentTarget.style.backgroundColor = "#B76E79"; e.currentTarget.style.color = "#fff"; }}
-                  onMouseLeave={e => { e.currentTarget.style.backgroundColor = "rgba(183,110,121,0.15)"; e.currentTarget.style.color = "#D4A0A7"; }}
-                >
-                  <ShoppingBag size={12} /> Add All to Bag
-                </motion.button>
-              )}
-            </div>
+      <PageHeader
+        eyebrow="Saved Pieces"
+        title="Your Wishlist"
+        watermark="Wishlist"
+        padding="100px 48px 48px"
+        right={
+          <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+            <span style={{ fontFamily: "Inter, sans-serif", fontSize: "12px", color: "rgba(250,247,242,0.4)" }}>
+              {wishlist.length} {wishlist.length === 1 ? "piece" : "pieces"}
+            </span>
+            {wishlist.length > 1 && (
+              <motion.button
+                whileTap={{ scale: 0.97 }}
+                onClick={handleAddAll}
+                style={{ display: "inline-flex", alignItems: "center", gap: "8px", backgroundColor: "rgba(183,110,121,0.15)", border: "1px solid rgba(183,110,121,0.4)", color: "#D4A0A7", padding: "10px 20px", fontFamily: "Inter, sans-serif", fontSize: "9px", letterSpacing: "0.22em", textTransform: "uppercase", cursor: "pointer", transition: "all 0.25s" }}
+                onMouseEnter={e => { e.currentTarget.style.backgroundColor = "#B76E79"; e.currentTarget.style.color = "#fff"; }}
+                onMouseLeave={e => { e.currentTarget.style.backgroundColor = "rgba(183,110,121,0.15)"; e.currentTarget.style.color = "#D4A0A7"; }}
+              >
+                <ShoppingBag size={12} /> Add All to Bag
+              </motion.button>
+            )}
           </div>
-        </div>
-      </div>
+        }
+      />
 
       {/* Grid */}
       <div style={{ maxWidth: "1320px", margin: "0 auto", padding: "48px 48px 80px" }}>
@@ -271,32 +253,7 @@ export default function Wishlist() {
       </div>
 
       {/* Suggestions */}
-      {suggestions.length > 0 && (
-        <div style={{ backgroundColor: "#F0EAE2", padding: "72px 0" }}>
-          <div style={{ maxWidth: "1320px", margin: "0 auto", padding: "0 48px" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "36px" }}>
-              <div>
-                <p style={{ fontFamily: "Inter, sans-serif", fontSize: "8px", letterSpacing: "0.42em", textTransform: "uppercase", color: "#B76E79", marginBottom: "10px" }}>Curated for You</p>
-                <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "36px", fontWeight: 300, color: "#1A1410" }}>You May Also Love</h2>
-              </div>
-              <Link to="/shop"
-                style={{ display: "inline-flex", alignItems: "center", gap: "6px", fontFamily: "Inter, sans-serif", fontSize: "9px", letterSpacing: "0.22em", textTransform: "uppercase", color: "#B76E79", textDecoration: "none" }}
-                onMouseEnter={e => e.currentTarget.style.gap = "10px"}
-                onMouseLeave={e => e.currentTarget.style.gap = "6px"}
-              >
-                View All <ArrowUpRight size={12} />
-              </Link>
-            </div>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "3px" }}>
-              {suggestions.map((p, i) => (
-                <motion.div key={p.id} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} style={{ height: "360px" }}>
-                  <ProductCard product={p} />
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
+      <SuggestionsGrid products={suggestions} eyebrow="Curated for You" title="You May Also Love" />
     </div>
   );
 }

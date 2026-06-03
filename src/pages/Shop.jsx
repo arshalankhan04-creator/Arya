@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef } from "react";
+import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { SlidersHorizontal, X, ChevronDown, Search, ArrowUpRight } from "lucide-react";
 import { products } from "../data/products";
@@ -72,7 +72,6 @@ export default function Shop() {
   const [search,    setSearch]    = useState("");
   const [sortOpen,  setSortOpen]  = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const gridRef = useRef(null);
 
   /* ── active filter chips ── */
   const activeFilters = [
@@ -591,7 +590,6 @@ export default function Shop() {
             ) : (
               <motion.div
                 key="grid"
-                ref={gridRef}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}

@@ -130,4 +130,4 @@ export const products = [
   },
 ];
 
-export const featuredProducts = products.slice(0, 4);
+export const featuredProducts = products.filter((_, i) => i < 4);

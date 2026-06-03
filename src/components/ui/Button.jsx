@@ -1,16 +1,90 @@
-export default function Button({ children, variant = "primary", className = "", ...props }) {
-  const base = "inline-flex items-center justify-center gap-2 font-sans font-medium tracking-widest text-sm uppercase transition-all duration-300 cursor-pointer";
+import { motion } from "framer-motion";
+import { ROSE_GOLD, ROSE_DARK, DARK, IVORY } from "../../constants/colors";
 
-  const variants = {
-    primary: "bg-[#B76E79] text-white px-8 py-3.5 hover:bg-[#8B4A54] active:scale-95",
-    outline: "border border-[#B76E79] text-[#B76E79] px-8 py-3.5 hover:bg-[#B76E79] hover:text-white active:scale-95",
-    ghost: "text-[#B76E79] px-4 py-2 hover:text-[#8B4A54] underline-offset-4 hover:underline",
-    dark: "bg-[#2C2C2C] text-white px-8 py-3.5 hover:bg-[#4A4A4A] active:scale-95",
+const VARIANTS = {
+  primary: {
+    base: { backgroundColor: ROSE_GOLD, color: IVORY },
+    hover: { backgroundColor: ROSE_DARK },
+    leave: { backgroundColor: ROSE_GOLD },
+  },
+  dark: {
+    base: { backgroundColor: DARK, color: IVORY },
+    hover: { backgroundColor: ROSE_GOLD },
+    leave: { backgroundColor: DARK },
+  },
+  outline: {
+    base: { backgroundColor: "transparent", color: ROSE_GOLD, border: `1px solid ${ROSE_GOLD}` },
+    hover: { backgroundColor: ROSE_GOLD, color: IVORY },
+    leave: { backgroundColor: "transparent", color: ROSE_GOLD },
+  },
+  ghost: {
+    base: { backgroundColor: "transparent", color: ROSE_GOLD, border: "none" },
+    hover: { color: ROSE_DARK },
+    leave: { color: ROSE_GOLD },
+  },
+};
+
+/**
+ * Button
+ * Shared button component with 4 variants: primary, dark, outline, ghost.
+ *
+ * Props:
+ *   variant   — "primary" | "dark" | "outline" | "ghost"  (default: "dark")
+ *   size      — "sm" | "md" | "lg"  (default: "md")
+ *   children  — button content
+ *   as        — "button" | "a" | "div" (default: "button")
+ *   ...rest   — all other props passed through (onClick, href, etc.)
+ */
+export default function Button({
+  variant = "dark",
+  size = "md",
+  children,
+  style: extraStyle = {},
+  onMouseEnter,
+  onMouseLeave,
+  ...rest
+}) {
+  const v = VARIANTS[variant] || VARIANTS.dark;
+
+  const sizes = {
+    sm: { padding: "9px 20px", fontSize: "9px" },
+    md: { padding: "13px 28px", fontSize: "10px" },
+    lg: { padding: "16px 36px", fontSize: "11px" },
+  };
+
+  const baseStyle = {
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: "8px",
+    fontFamily: "Inter, sans-serif",
+    letterSpacing: "0.22em",
+    textTransform: "uppercase",
+    fontWeight: 500,
+    cursor: "pointer",
+    textDecoration: "none",
+    transition: "background-color 0.2s, color 0.2s, border-color 0.2s",
+    border: "none",
+    ...sizes[size],
+    ...v.base,
+    ...extraStyle,
   };
 
   return (
-    <button className={`${base} ${variants[variant]} ${className}`} {...props}>
+    <motion.button
+      whileTap={{ scale: 0.98 }}
+      style={baseStyle}
+      onMouseEnter={e => {
+        Object.assign(e.currentTarget.style, v.hover);
+        onMouseEnter?.(e);
+      }}
+      onMouseLeave={e => {
+        Object.assign(e.currentTarget.style, v.leave);
+        onMouseLeave?.(e);
+      }}
+      {...rest}
+    >
       {children}
-    </button>
+    </motion.button>
   );
 }

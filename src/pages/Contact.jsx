@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Mail, Phone, MapPin, Instagram, Clock, ArrowUpRight, Send } from "lucide-react";
+import { Mail, Phone, MapPin, Clock, ArrowUpRight, Send } from "lucide-react";
 
 /* ── contact info items ──────────────────────────────── */
 const INFO = [
@@ -316,7 +316,11 @@ export default function Contact() {
             style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "20px 24px", border: "1px solid rgba(183,110,121,0.25)", textDecoration: "none", transition: "background-color 0.25s", marginBottom: "32px" }}
           >
             <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-              <Instagram size={18} color="#B76E79" />
+              <svg viewBox="0 0 24 24" fill="none" stroke="#B76E79" strokeWidth="1.5" width="18" height="18">
+                <rect x="2" y="2" width="20" height="20" rx="5" />
+                <circle cx="12" cy="12" r="4" />
+                <circle cx="17.5" cy="6.5" r="0.8" fill="#B76E79" stroke="none" />
+              </svg>
               <div>
                 <p style={{ fontFamily: "Inter, sans-serif", fontSize: "9px", letterSpacing: "0.22em", textTransform: "uppercase", color: "#B76E79", marginBottom: "2px" }}>Follow Along</p>
                 <p style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "16px", fontWeight: 300, color: "#1A1410" }}>@aryacollections</p>

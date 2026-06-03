@@ -81,14 +81,20 @@ export default function Footer() {
           <div>
             <span style={col}>Quick Links</span>
             <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
-              {["Home", "Shop", "Bridal Collection", "About Us", "Contact"].map((item) => (
-                <Link key={item} to="/" style={linkStyle}
-                  onMouseEnter={(e) => (e.currentTarget.style.color = "#FAF7F2")}
-                  onMouseLeave={(e) => (e.currentTarget.style.color = "#8A8078")}
-                >
-                  {item}
-                </Link>
-              ))}
+            {[
+              { label: "Home",             to: "/"       },
+              { label: "Shop",             to: "/shop"   },
+              { label: "Bridal Collection",to: "/shop"   },
+              { label: "About Us",         to: "/about"  },
+              { label: "Contact",          to: "/contact"},
+            ].map((item) => (
+              <Link key={item.label} to={item.to} style={linkStyle}
+                onMouseEnter={(e) => (e.currentTarget.style.color = "#FAF7F2")}
+                onMouseLeave={(e) => (e.currentTarget.style.color = "#8A8078")}
+              >
+                {item.label}
+              </Link>
+            ))}
             </div>
           </div>
 

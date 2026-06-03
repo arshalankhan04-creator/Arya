@@ -5,6 +5,8 @@ import { Minus, Plus, X, ShoppingBag, ArrowUpRight, Tag } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import { products } from "../data/products";
 import ProductCard from "../components/product/ProductCard";
+import PageHeader from "../components/ui/PageHeader";
+import SuggestionsGrid from "../components/ui/SuggestionsGrid";
 
 /* ── promo codes ─────────────────────────────────────── */
 const PROMO_CODES = {
@@ -174,21 +176,7 @@ export default function Cart() {
         </div>
 
         {/* Suggestions even when empty */}
-        {suggestions.length > 0 && (
-          <div style={{ backgroundColor: "#F0EAE2", padding: "64px 0" }}>
-            <div style={{ maxWidth: "1320px", margin: "0 auto", padding: "0 48px" }}>
-              <p style={{ fontFamily: "Inter, sans-serif", fontSize: "8px", letterSpacing: "0.42em", textTransform: "uppercase", color: "#B76E79", marginBottom: "10px" }}>Start Here</p>
-              <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "36px", fontWeight: 300, color: "#1A1410", marginBottom: "32px" }}>You Might Love</h2>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "3px" }}>
-                {suggestions.map((p, i) => (
-                  <motion.div key={p.id} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} style={{ height: "360px" }}>
-                    <ProductCard product={p} />
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
+        <SuggestionsGrid products={suggestions} eyebrow="Start Here" title="You Might Love" />
       </div>
     );
   }
@@ -198,19 +186,16 @@ export default function Cart() {
     <div style={{ backgroundColor: "#FAF7F2", minHeight: "100vh" }}>
 
       {/* Header */}
-      <div style={{ backgroundColor: "#1A1410", padding: "100px 48px 48px" }}>
-        <div style={{ maxWidth: "1320px", margin: "0 auto" }}>
-          <p style={{ fontFamily: "Inter, sans-serif", fontSize: "8px", letterSpacing: "0.42em", textTransform: "uppercase", color: "#B76E79", marginBottom: "14px" }}>Your Selection</p>
-          <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between" }}>
-            <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "clamp(38px, 5vw, 60px)", fontWeight: 300, color: "#FAF7F2", lineHeight: 1 }}>
-              Shopping Bag
-            </h1>
-            <span style={{ fontFamily: "Inter, sans-serif", fontSize: "12px", color: "rgba(250,247,242,0.4)" }}>
-              {cartItems.reduce((s, i) => s + i.quantity, 0)} {cartItems.length === 1 ? "item" : "items"}
-            </span>
-          </div>
-        </div>
-      </div>
+      <PageHeader
+        eyebrow="Your Selection"
+        title="Shopping Bag"
+        watermark="Bag"
+        right={
+          <span style={{ fontFamily: "Inter, sans-serif", fontSize: "12px", color: "rgba(250,247,242,0.4)" }}>
+            {cartItems.reduce((s, i) => s + i.quantity, 0)} {cartItems.length === 1 ? "item" : "items"}
+          </span>
+        }
+      />
 
       {/* Body */}
       <div style={{ maxWidth: "1320px", margin: "0 auto", padding: "0 48px 80px" }}>
@@ -335,31 +320,7 @@ export default function Cart() {
       </div>
 
       {/* You may also like */}
-      {suggestions.length > 0 && (
-        <div style={{ backgroundColor: "#F0EAE2", padding: "72px 0" }}>
-          <div style={{ maxWidth: "1320px", margin: "0 auto", padding: "0 48px" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "36px" }}>
-              <div>
-                <p style={{ fontFamily: "Inter, sans-serif", fontSize: "8px", letterSpacing: "0.42em", textTransform: "uppercase", color: "#B76E79", marginBottom: "10px" }}>Keep Exploring</p>
-                <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "36px", fontWeight: 300, color: "#1A1410" }}>You May Also Like</h2>
-              </div>
-              <Link to="/shop" style={{ display: "inline-flex", alignItems: "center", gap: "6px", fontFamily: "Inter, sans-serif", fontSize: "9px", letterSpacing: "0.22em", textTransform: "uppercase", color: "#B76E79", textDecoration: "none" }}
-                onMouseEnter={e => e.currentTarget.style.gap = "10px"}
-                onMouseLeave={e => e.currentTarget.style.gap = "6px"}
-              >
-                View All <ArrowUpRight size={12} />
-              </Link>
-            </div>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "3px" }}>
-              {suggestions.map((p, i) => (
-                <motion.div key={p.id} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} style={{ height: "360px" }}>
-                  <ProductCard product={p} />
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
+      <SuggestionsGrid products={suggestions} eyebrow="Keep Exploring" title="You May Also Like" />
     </div>
   );
 }

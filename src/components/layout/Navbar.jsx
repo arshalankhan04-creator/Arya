@@ -31,13 +31,11 @@ const leftLinks = [
       sub: "Crafted for your forever",
     },
   },
-  { label: "Bridal", to: "/shop" },
-  { label: "About",  to: "/about" },
+  { label: "Bridal",  to: "/bridal"  },
+  { label: "About",   to: "/about"   },
 ];
 const rightLinks = [
-  { label: "Gallery",      to: "/shop" },
-  { label: "Testimonials", to: "/" },
-  { label: "Contact",      to: "/contact" },
+  { label: "Contact", to: "/contact" },
 ];
 
 /* ── helpers ────────────────────────────────────────────── */
@@ -62,7 +60,7 @@ const Badge = ({ count }) =>
   ) : null;
 
 /* ── MegaMenu ───────────────────────────────────────────── */
-function MegaMenu({ data, scrolled }) {
+function MegaMenu({ data }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: -8 }}
@@ -149,7 +147,7 @@ function MegaMenu({ data, scrolled }) {
 
 /* ── main component ─────────────────────────────────────── */
 export default function Navbar() {
-  const [scrolled,     setScrolled]     = useState(false);
+  const [scrolled, setScrolled] = useState(false); // used for scroll detection logic
   const [mobileOpen,   setMobileOpen]   = useState(false);
   const [searchOpen,   setSearchOpen]   = useState(false);
   const [megaOpen,     setMegaOpen]     = useState(null);   // link label or null
@@ -248,6 +246,7 @@ export default function Navbar() {
             >
               <NavLink
                 to={l.to}
+                end
                 className="nav-link"
                 style={({ isActive }) => ({
                   ...linkStyle,
@@ -285,7 +284,7 @@ export default function Navbar() {
                     onMouseEnter={() => openMega(l.label)}
                     onMouseLeave={() => closeMega()}
                   >
-                    <MegaMenu data={l} scrolled={scrolled} />
+                    <MegaMenu data={l} />
                   </div>
                 )}
               </AnimatePresence>
@@ -334,6 +333,7 @@ export default function Navbar() {
             <div key={l.label} style={{ position: "relative" }}>
               <NavLink
                 to={l.to}
+                end
                 className="nav-link"
                 style={({ isActive }) => ({
                   ...linkStyle,
@@ -549,6 +549,7 @@ export default function Navbar() {
                   >
                     <NavLink
                       to={l.to}
+                      end
                       onClick={() => setMobileOpen(false)}
                       style={({ isActive }) => ({
                         display: "flex", alignItems: "center", justifyContent: "space-between",

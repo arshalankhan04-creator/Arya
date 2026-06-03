@@ -120,15 +120,6 @@ export default function About() {
             <p style={{ fontFamily: "Inter, sans-serif", fontSize: "13px", color: "rgba(255,255,255,0.5)", lineHeight: 1.8, maxWidth: "360px" }}>
               Fine jewellery handcrafted for the modern Indian woman — rooted in tradition, alive in the present.
             </p>
-            {/* Scroll cue */}
-            <motion.div
-              animate={{ y: [0, 8, 0] }}
-              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-              style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "6px", color: "rgba(255,255,255,0.25)" }}
-            >
-              <div style={{ width: "1px", height: "40px", backgroundColor: "rgba(183,110,121,0.4)" }} />
-              <span style={{ fontFamily: "Inter, sans-serif", fontSize: "7px", letterSpacing: "0.28em", textTransform: "uppercase", writingMode: "vertical-rl", transform: "rotate(180deg)" }}>Scroll</span>
-            </motion.div>
           </motion.div>
         </div>
       </div>

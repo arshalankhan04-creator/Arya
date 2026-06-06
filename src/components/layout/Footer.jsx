@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Mail, Phone, MapPin } from "lucide-react";
 
@@ -17,6 +18,13 @@ const YtIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="15" height="15">
     <path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z" />
     <polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="currentColor" stroke="none" />
+  </svg>
+);
+const LiIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="15" height="15">
+    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+    <rect x="2" y="9" width="4" height="12" />
+    <circle cx="4" cy="4" r="2" />
   </svg>
 );
 
@@ -40,6 +48,15 @@ const linkStyle = {
 };
 
 export default function Footer() {
+  const [email, setEmail] = useState("");
+  const [joined, setJoined] = useState(false);
+
+  const handleNewsletter = (e) => {
+    e.preventDefault();
+    if (!email.trim()) return;
+    setJoined(true);
+    setEmail("");
+  };
   return (
     <footer style={{ backgroundColor: "#1A1714" }}>
       {/* Main */}
@@ -60,8 +77,10 @@ export default function Footer() {
               Crafting timeless jewellery for the modern Indian woman. Every piece tells a story of heritage and love.
             </p>
             <div style={{ display: "flex", gap: "12px", marginTop: "24px" }}>
-              {[IgIcon, FbIcon, YtIcon].map((Icon, i) => (
-                <a key={i} href="#" style={{
+              {[
+                { Icon: LiIcon, href: "https://www.linkedin.com/in/arshalan-khan-ab73a5248", label: "LinkedIn" },
+              ].map(({ Icon, href, label }) => (
+                <a key={label} href={href} target="_blank" rel="noopener noreferrer" aria-label={label} style={{
                   width: "36px", height: "36px",
                   border: "1px solid #3A3330",
                   display: "flex", alignItems: "center", justifyContent: "center",
@@ -82,11 +101,11 @@ export default function Footer() {
             <span style={col}>Quick Links</span>
             <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
             {[
-              { label: "Home",             to: "/"       },
-              { label: "Shop",             to: "/shop"   },
-              { label: "Bridal Collection",to: "/shop"   },
-              { label: "About Us",         to: "/about"  },
-              { label: "Contact",          to: "/contact"},
+              { label: "Home",             to: "/"        },
+              { label: "Shop",             to: "/shop"    },
+              { label: "Bridal Collection",to: "/bridal"  },
+              { label: "About Us",         to: "/about"   },
+              { label: "Contact",          to: "/contact" },
             ].map((item) => (
               <Link key={item.label} to={item.to} style={linkStyle}
                 onMouseEnter={(e) => (e.currentTarget.style.color = "#FAF7F2")}
@@ -103,12 +122,12 @@ export default function Footer() {
             <span style={col}>Support</span>
             <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
               {["Shipping Policy", "Return & Exchange", "Size Guide", "Care Instructions", "FAQ"].map((item) => (
-                <a key={item} href="#" style={linkStyle}
+                <Link key={item} to="/contact" style={linkStyle}
                   onMouseEnter={(e) => (e.currentTarget.style.color = "#FAF7F2")}
                   onMouseLeave={(e) => (e.currentTarget.style.color = "#8A8078")}
                 >
                   {item}
-                </a>
+                </Link>
               ))}
             </div>
           </div>
@@ -135,36 +154,48 @@ export default function Footer() {
             <p style={{ fontFamily: "Inter, sans-serif", fontSize: "9px", letterSpacing: "0.3em", textTransform: "uppercase", color: "#6B6059", marginBottom: "10px" }}>
               Newsletter
             </p>
-            <div style={{ display: "flex" }}>
-              <input
-                type="email"
-                placeholder="Your email"
-                style={{
-                  flex: 1,
-                  backgroundColor: "#252019",
-                  border: "1px solid #3A3330",
-                  borderRight: "none",
-                  padding: "10px 14px",
+            {joined ? (
+              <p style={{ fontFamily: "Inter, sans-serif", fontSize: "11px", color: "#B76E79", letterSpacing: "0.06em" }}>
+                ✓ You're on the list!
+              </p>
+            ) : (
+              <form onSubmit={handleNewsletter} style={{ display: "flex" }}>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  placeholder="Your email"
+                  style={{
+                    flex: 1,
+                    backgroundColor: "#252019",
+                    border: "1px solid #3A3330",
+                    borderRight: "none",
+                    padding: "10px 14px",
+                    fontFamily: "Inter, sans-serif",
+                    fontSize: "12px",
+                    color: "#FAF7F2",
+                    outline: "none",
+                  }}
+                />
+                <button type="submit" style={{
+                  backgroundColor: "#B76E79",
+                  border: "none",
+                  padding: "10px 18px",
                   fontFamily: "Inter, sans-serif",
-                  fontSize: "12px",
-                  color: "#FAF7F2",
-                  outline: "none",
+                  fontSize: "9px",
+                  letterSpacing: "0.25em",
+                  textTransform: "uppercase",
+                  color: "white",
+                  cursor: "pointer",
+                  transition: "background-color 0.2s",
                 }}
-              />
-              <button style={{
-                backgroundColor: "#B76E79",
-                border: "none",
-                padding: "10px 18px",
-                fontFamily: "Inter, sans-serif",
-                fontSize: "9px",
-                letterSpacing: "0.25em",
-                textTransform: "uppercase",
-                color: "white",
-                cursor: "pointer",
-              }}>
-                Join
-              </button>
-            </div>
+                  onMouseEnter={e => e.currentTarget.style.backgroundColor = "#8B4A54"}
+                  onMouseLeave={e => e.currentTarget.style.backgroundColor = "#B76E79"}
+                >
+                  Join
+                </button>
+              </form>
+            )}
           </div>
         </div>
       </div>

@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
-import { ShoppingBag, Heart, Search, Menu, X, ArrowUpRight, ChevronDown } from "lucide-react";
+import { ShoppingBag, Heart, Search, Menu, X, ArrowUpRight, ChevronDown, LogOut, User } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useCart } from "../../context/CartContext";
 import { useWishlist } from "../../context/WishlistContext";
+import { useAuth } from "../../context/AuthContext";
 
 /* ── nav data ───────────────────────────────────────────── */
 const leftLinks = [
@@ -147,17 +148,18 @@ function MegaMenu({ data }) {
 
 /* ── main component ─────────────────────────────────────── */
 export default function Navbar() {
-  const [scrolled, setScrolled] = useState(false); // used for scroll detection logic
-  const [mobileOpen,   setMobileOpen]   = useState(false);
-  const [searchOpen,   setSearchOpen]   = useState(false);
-  const [megaOpen,     setMegaOpen]     = useState(null);   // link label or null
-  const [searchVal,    setSearchVal]    = useState("");
+  const [scrolled, setScrolled] = useState(false);
+  const [mobileOpen,  setMobileOpen]  = useState(false);
+  const [searchOpen,  setSearchOpen]  = useState(false);
+  const [megaOpen,    setMegaOpen]    = useState(null);
+  const [searchVal,   setSearchVal]   = useState("");
   const searchRef  = useRef(null);
   const megaTimer  = useRef(null);
   const location   = useLocation();
 
   const { cartCount }     = useCart();
   const { wishlistCount } = useWishlist();
+  const { user, signOut, openAuthModal } = useAuth();
 
   /* scroll detection */
   useEffect(() => {
@@ -444,6 +446,69 @@ export default function Navbar() {
               </Link>
             </motion.div>
 
+            {/* Divider */}
+            <div style={{ width: "1px", height: "14px", backgroundColor: transparent ? "rgba(255,255,255,0.18)" : "#ECDFD6" }} />
+
+            {/* Auth button */}
+            {user ? (
+              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                {/* Avatar — links to profile */}
+                <Link to="/profile" style={{ display: "flex", flexShrink: 0 }}>
+                  {user.user_metadata?.avatar_url ? (
+                    <img
+                      src={user.user_metadata.avatar_url}
+                      alt="avatar"
+                      style={{
+                        width: "26px", height: "26px",
+                        borderRadius: "50%",
+                        border: "1.5px solid #B76E79",
+                        objectFit: "cover",
+                        transition: "opacity 0.2s",
+                      }}
+                      onMouseEnter={e => e.currentTarget.style.opacity = "0.75"}
+                      onMouseLeave={e => e.currentTarget.style.opacity = "1"}
+                    />
+                  ) : (
+                    <div style={{
+                      width: "26px", height: "26px", borderRadius: "50%",
+                      background: "#B76E79",
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                    }}>
+                      <User size={13} color="#fff" />
+                    </div>
+                  )}
+                </Link>
+                {/* Sign out */}
+                <motion.button
+                  className="icon-btn"
+                  onClick={signOut}
+                  whileTap={{ scale: 0.88 }}
+                  title="Sign out"
+                  style={{
+                    background: "none", border: "none", cursor: "pointer",
+                    color: iconClr, display: "flex", padding: "4px",
+                    transition: "color 0.2s",
+                  }}
+                >
+                  <LogOut size={15} />
+                </motion.button>
+              </div>
+            ) : (
+              <motion.button
+                className="icon-btn"
+                onClick={() => openAuthModal()}
+                whileTap={{ scale: 0.88 }}
+                title="Sign in"
+                style={{
+                  background: "none", border: "none", cursor: "pointer",
+                  color: iconClr, display: "flex", alignItems: "center",
+                  padding: "4px", transition: "color 0.2s",
+                }}
+              >
+                <User size={16} />
+              </motion.button>
+            )}
+
           </div>
         </div>
 
@@ -581,7 +646,7 @@ export default function Navbar() {
                 }}>
                   "Wear your story"
                 </p>
-                <div style={{ display: "flex", gap: "16px" }}>
+                <div style={{ display: "flex", gap: "16px", flexWrap: "wrap" }}>
                   <Link to="/wishlist" onClick={() => setMobileOpen(false)}
                     style={{
                       display: "flex", alignItems: "center", gap: "6px",
@@ -602,6 +667,34 @@ export default function Navbar() {
                   >
                     <ShoppingBag size={13} /> Cart {cartCount > 0 && `(${cartCount})`}
                   </Link>
+
+                  {user ? (
+                    <button
+                      onClick={() => { signOut(); setMobileOpen(false); }}
+                      style={{
+                        display: "flex", alignItems: "center", gap: "6px",
+                        fontFamily: "Inter, sans-serif", fontSize: "10px",
+                        letterSpacing: "0.12em", textTransform: "uppercase",
+                        color: "#8A8078", background: "none", border: "none",
+                        cursor: "pointer", padding: 0,
+                      }}
+                    >
+                      <LogOut size={13} /> Sign Out
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => { setMobileOpen(false); openAuthModal(); }}
+                      style={{
+                        display: "flex", alignItems: "center", gap: "6px",
+                        fontFamily: "Inter, sans-serif", fontSize: "10px",
+                        letterSpacing: "0.12em", textTransform: "uppercase",
+                        color: "#B76E79", background: "none", border: "none",
+                        cursor: "pointer", padding: 0,
+                      }}
+                    >
+                      <User size={13} /> Sign In
+                    </button>
+                  )}
                 </div>
               </div>
             </motion.div>

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Mail, Phone, MapPin, Clock, ArrowUpRight, Send } from "lucide-react";
+import { Mail, Phone, MapPin, Clock, ArrowUpRight, Send, CheckCircle } from "lucide-react";
+import { supabase } from "../lib/supabase";
 
 /* ── contact info items ──────────────────────────────── */
 const INFO = [
@@ -102,10 +103,17 @@ export default function Contact() {
     return e;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const e2 = validate();
     if (Object.keys(e2).length) { setErrors(e2); return; }
+
+    await supabase.from("contact_messages").insert({
+      name: form.name,
+      email: form.email,
+      message: `[${form.inquiry}] ${form.message}`,
+    });
+
     setSubmitted(true);
   };
 
@@ -174,7 +182,7 @@ export default function Contact() {
                   transition={{ duration: 0.5, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
                   style={{ width: "56px", height: "56px", borderRadius: "50%", backgroundColor: "rgba(183,110,121,0.1)", border: "1px solid rgba(183,110,121,0.3)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 24px" }}
                 >
-                  <span style={{ fontSize: "22px" }}>✦</span>
+                  <CheckCircle size={24} color="#B76E79" strokeWidth={1.5} />
                 </motion.div>
                 <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "clamp(28px, 3vw, 38px)", fontWeight: 300, color: "#1A1410", marginBottom: "12px" }}>
                   Message Received

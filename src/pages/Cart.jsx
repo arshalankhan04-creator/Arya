@@ -1,18 +1,19 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Minus, Plus, X, ShoppingBag, ArrowUpRight, Tag } from "lucide-react";
+import { Minus, Plus, X, ShoppingBag, ArrowUpRight, Tag, Lock } from "lucide-react";
 import { useCart } from "../context/CartContext";
-import { products } from "../data/products";
-import ProductCard from "../components/product/ProductCard";
+import { useAuth } from "../context/AuthContext";
+import { useProducts } from "../hooks/useProducts";
+import { supabase } from "../lib/supabase";
 import PageHeader from "../components/ui/PageHeader";
 import SuggestionsGrid from "../components/ui/SuggestionsGrid";
 
 /* ── promo codes ─────────────────────────────────────── */
 const PROMO_CODES = {
-  ARYA10:  { discount: 0.10, label: "10% off your order"   },
+  ARYA10:   { discount: 0.10, label: "10% off your order"   },
   BRIDAL20: { discount: 0.20, label: "20% off bridal pieces" },
-  WELCOME: { discount: 0.15, label: "15% welcome discount"  },
+  WELCOME:  { discount: 0.15, label: "15% welcome discount"  },
 };
 
 /* ── cart item row ───────────────────────────────────── */
@@ -113,10 +114,15 @@ function CartItem({ item, onRemove, onQtyChange }) {
 
 /* ── main page ───────────────────────────────────────── */
 export default function Cart() {
-  const { cartItems, removeFromCart, updateQuantity, cartTotal } = useCart();
-  const [promoInput,  setPromoInput]  = useState("");
+  const { cartItems, removeFromCart, updateQuantity, cartTotal, clearCart } = useCart();
+  const { user, openAuthModal } = useAuth();
+  const { products } = useProducts();
+
+  const [promoInput,   setPromoInput]   = useState("");
   const [promoApplied, setPromoApplied] = useState(null);
-  const [promoError,  setPromoError]  = useState("");
+  const [promoError,   setPromoError]   = useState("");
+  const [checkingOut,  setCheckingOut]  = useState(false);
+  const [orderPlaced,  setOrderPlaced]  = useState(false);
 
   const applyPromo = () => {
     const code = promoInput.trim().toUpperCase();
@@ -129,13 +135,81 @@ export default function Cart() {
     }
   };
 
-  const discount     = promoApplied ? Math.round(cartTotal * promoApplied.discount) : 0;
-  const shipping     = cartTotal > 999 ? 0 : 99;
-  const finalTotal   = cartTotal - discount + shipping;
+  const discount   = promoApplied ? Math.round(cartTotal * promoApplied.discount) : 0;
+  const shipping   = cartTotal > 999 ? 0 : 99;
+  const finalTotal = cartTotal - discount + shipping;
 
   /* suggestions — products not in cart */
-  const cartIds      = cartItems.map(i => i.id);
-  const suggestions  = products.filter(p => !cartIds.includes(p.id)).slice(0, 3);
+  const cartIds    = cartItems.map(i => i.id);
+  const suggestions = products.filter(p => !cartIds.includes(p.id)).slice(0, 3);
+
+  /* checkout — saves order to Supabase */
+  const handleCheckout = async () => {
+    if (!user) {
+      openAuthModal("checkout");
+      return;
+    }
+    setCheckingOut(true);
+    const orderItems = cartItems.map(item => ({
+      id: item.id,
+      name: item.name,
+      price: item.price,
+      quantity: item.quantity,
+      image: item.image,
+    }));
+
+    const { error } = await supabase.from("orders").insert({
+      user_id: user.id,
+      items: orderItems,
+      total: finalTotal,
+      status: "pending",
+    });
+
+    setCheckingOut(false);
+
+    if (!error) {
+      setOrderPlaced(true);
+      clearCart();
+    } else {
+      alert("Something went wrong. Please try again.");
+    }
+  };
+
+  /* ── order confirmed state ── */
+  if (orderPlaced) {
+    return (
+      <div style={{ backgroundColor: "#FAF7F2", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          style={{ textAlign: "center", padding: "64px 48px", backgroundColor: "#FFFFFF", border: "1px solid #EDE5DC", maxWidth: "480px" }}
+        >
+          <motion.div
+            initial={{ scale: 0.5, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.1, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            style={{ width: "56px", height: "56px", borderRadius: "50%", backgroundColor: "rgba(183,110,121,0.1)", border: "1px solid rgba(183,110,121,0.3)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 24px" }}
+          >
+            <Lock size={20} color="#B76E79" />
+          </motion.div>
+          <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "36px", fontWeight: 300, color: "#1A1410", marginBottom: "12px" }}>
+            Order Confirmed
+          </h2>
+          <p style={{ fontFamily: "Inter, sans-serif", fontSize: "13px", color: "#8A8078", lineHeight: 1.7, marginBottom: "32px" }}>
+            Thank you for your order. We'll reach out shortly with confirmation and shipping details.
+          </p>
+          <Link
+            to="/shop"
+            style={{ display: "inline-flex", alignItems: "center", gap: "8px", backgroundColor: "#1A1410", color: "#FAF7F2", padding: "14px 32px", fontFamily: "Inter, sans-serif", fontSize: "10px", letterSpacing: "0.22em", textTransform: "uppercase", textDecoration: "none" }}
+            onMouseEnter={e => e.currentTarget.style.backgroundColor = "#B76E79"}
+            onMouseLeave={e => e.currentTarget.style.backgroundColor = "#1A1410"}
+          >
+            Continue Shopping <ArrowUpRight size={13} />
+          </Link>
+        </motion.div>
+      </div>
+    );
+  }
 
   /* ── empty cart ── */
   if (cartItems.length === 0) {
@@ -174,8 +248,6 @@ export default function Cart() {
             Explore the Edit <ArrowUpRight size={13} />
           </Link>
         </div>
-
-        {/* Suggestions even when empty */}
         <SuggestionsGrid products={suggestions} eyebrow="Start Here" title="You Might Love" />
       </div>
     );
@@ -185,7 +257,6 @@ export default function Cart() {
   return (
     <div style={{ backgroundColor: "#FAF7F2", minHeight: "100vh" }}>
 
-      {/* Header */}
       <PageHeader
         eyebrow="Your Selection"
         title="Shopping Bag"
@@ -197,7 +268,6 @@ export default function Cart() {
         }
       />
 
-      {/* Body */}
       <div style={{ maxWidth: "1320px", margin: "0 auto", padding: "0 48px 80px" }}>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 360px", gap: "64px", alignItems: "start", paddingTop: "48px" }}>
 
@@ -208,8 +278,6 @@ export default function Cart() {
                 <CartItem key={item.id} item={item} onRemove={removeFromCart} onQtyChange={updateQuantity} />
               ))}
             </AnimatePresence>
-
-            {/* Continue shopping */}
             <div style={{ marginTop: "32px" }}>
               <Link
                 to="/shop"
@@ -229,7 +297,6 @@ export default function Cart() {
                 Order Summary
               </p>
 
-              {/* Line items */}
               <div style={{ display: "flex", flexDirection: "column", gap: "12px", marginBottom: "20px" }}>
                 <div style={{ display: "flex", justifyContent: "space-between" }}>
                   <span style={{ fontFamily: "Inter, sans-serif", fontSize: "12px", color: "#8A8078" }}>Subtotal</span>
@@ -249,7 +316,6 @@ export default function Cart() {
                 </div>
               </div>
 
-              {/* Divider */}
               <div style={{ borderTop: "1px solid #EDE5DC", paddingTop: "16px", marginBottom: "24px" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
                   <span style={{ fontFamily: "Inter, sans-serif", fontSize: "10px", letterSpacing: "0.14em", textTransform: "uppercase", color: "#1A1410", fontWeight: 600 }}>Total</span>
@@ -303,23 +369,28 @@ export default function Cart() {
               {/* Checkout CTA */}
               <motion.button
                 whileTap={{ scale: 0.98 }}
-                style={{ width: "100%", padding: "16px", backgroundColor: "#1A1410", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px", fontFamily: "Inter, sans-serif", fontSize: "10px", letterSpacing: "0.24em", textTransform: "uppercase", color: "#FAF7F2", transition: "background-color 0.25s", marginBottom: "12px" }}
-                onMouseEnter={e => e.currentTarget.style.backgroundColor = "#B76E79"}
-                onMouseLeave={e => e.currentTarget.style.backgroundColor = "#1A1410"}
+                onClick={handleCheckout}
+                disabled={checkingOut}
+                style={{ width: "100%", padding: "16px", backgroundColor: checkingOut ? "#8A8078" : "#1A1410", border: "none", cursor: checkingOut ? "wait" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px", fontFamily: "Inter, sans-serif", fontSize: "10px", letterSpacing: "0.24em", textTransform: "uppercase", color: "#FAF7F2", transition: "background-color 0.25s", marginBottom: "12px" }}
+                onMouseEnter={e => { if (!checkingOut) e.currentTarget.style.backgroundColor = "#B76E79"; }}
+                onMouseLeave={e => { if (!checkingOut) e.currentTarget.style.backgroundColor = "#1A1410"; }}
               >
-                <ShoppingBag size={14} /> Proceed to Checkout
+                <ShoppingBag size={14} />
+                {checkingOut ? "Placing Order…" : "Proceed to Checkout"}
               </motion.button>
 
-              {/* Trust note */}
-              <p style={{ fontFamily: "Inter, sans-serif", fontSize: "10px", color: "#8A8078", textAlign: "center", lineHeight: 1.6 }}>
-                🔒 Secure checkout · Free returns · Hallmark certified
-              </p>
+              {/* Trust note — Lock icon instead of emoji */}
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "6px" }}>
+                <Lock size={11} color="#8A8078" />
+                <p style={{ fontFamily: "Inter, sans-serif", fontSize: "10px", color: "#8A8078", lineHeight: 1.6 }}>
+                  Secure checkout · Free returns · Hallmark certified
+                </p>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* You may also like */}
       <SuggestionsGrid products={suggestions} eyebrow="Keep Exploring" title="You May Also Like" />
     </div>
   );

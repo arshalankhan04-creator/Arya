@@ -11,7 +11,7 @@ const cols = [
     tag: "Begin forever beautifully",
     desc: "Curated bridal sets, engagement rings & ceremonial jewellery crafted for your most special day. Every piece tells the story of a love that lasts.",
     cta: "Explore Bridal",
-    href: "/shop",
+    href: "/bridal",
     image: "https://images.unsplash.com/photo-1606800052052-a08af7148866?w=1400&q=90",
     accent: "#D4919A",
   },

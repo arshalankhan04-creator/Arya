@@ -4,16 +4,15 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Heart, ShoppingBag, X, ArrowUpRight } from "lucide-react";
 import { useWishlist } from "../context/WishlistContext";
 import { useCart } from "../context/CartContext";
-import { products } from "../data/products";
-import ProductCard from "../components/product/ProductCard";
+import { useProducts } from "../hooks/useProducts";
 import PageHeader from "../components/ui/PageHeader";
 import SuggestionsGrid from "../components/ui/SuggestionsGrid";
 
 /* ── wishlist item card ──────────────────────────────── */
 function WishlistCard({ item, onRemove, onAddToCart, justAdded }) {
   const [hovered, setHovered] = useState(false);
-  const discount = item.originalPrice
-    ? Math.round(((item.originalPrice - item.price) / item.originalPrice) * 100)
+  const discount = item.original_price
+    ? Math.round(((item.original_price - item.price) / item.original_price) * 100)
     : null;
 
   return (
@@ -82,9 +81,9 @@ function WishlistCard({ item, onRemove, onAddToCart, justAdded }) {
           <span style={{ fontFamily: "Inter, sans-serif", fontSize: "14px", fontWeight: 500, color: "#1A1410" }}>
             ₹{item.price.toLocaleString("en-IN")}
           </span>
-          {item.originalPrice && (
+          {item.original_price && (
             <span style={{ fontFamily: "Inter, sans-serif", fontSize: "11px", color: "#B0A090", textDecoration: "line-through" }}>
-              ₹{item.originalPrice.toLocaleString("en-IN")}
+              ₹{item.original_price.toLocaleString("en-IN")}
             </span>
           )}
         </div>
@@ -126,6 +125,7 @@ function WishlistCard({ item, onRemove, onAddToCart, justAdded }) {
 export default function Wishlist() {
   const { wishlist, toggleWishlist } = useWishlist();
   const { addToCart } = useCart();
+  const { products } = useProducts();
   const [addedIds, setAddedIds] = useState({});
 
   const handleAddToCart = (item) => {

@@ -10,8 +10,8 @@ export default function ProductCard({ product, large = false }) {
   const [hovered, setHovered] = useState(false);
   const wishlisted = isWishlisted(product.id);
 
-  const discount = product.originalPrice
-    ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
+  const discount = product.original_price
+    ? Math.round(((product.original_price - product.price) / product.original_price) * 100)
     : null;
 
   return (
@@ -185,14 +185,14 @@ export default function ProductCard({ product, large = false }) {
             }}>
               ₹{product.price.toLocaleString("en-IN")}
             </span>
-            {product.originalPrice && (
+            {product.original_price && (
               <span style={{
                 fontFamily: "Inter, sans-serif",
                 fontSize: "11px",
                 color: "rgba(255,255,255,0.4)",
                 textDecoration: "line-through",
               }}>
-                ₹{product.originalPrice.toLocaleString("en-IN")}
+                ₹{product.original_price.toLocaleString("en-IN")}
               </span>
             )}
           </div>

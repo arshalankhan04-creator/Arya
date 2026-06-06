@@ -7,6 +7,18 @@ import { categories } from "../../data/categories";
 function CategoryCard({ cat, style, tall = false }) {
   const [hovered, setHovered] = useState(false);
 
+  // Map category slugs to shop filter values
+  const categoryToFilter = {
+    bridal:    "/bridal",
+    rings:     "/shop?category=Rings",
+    necklaces: "/shop?category=Necklaces",
+    earrings:  "/shop?category=Earrings",
+    bracelets: "/shop?category=Bracelets",
+    everyday:  "/shop",
+  };
+
+  const linkTo = categoryToFilter[cat?.slug] || "/shop";
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 28 }}
@@ -16,7 +28,7 @@ function CategoryCard({ cat, style, tall = false }) {
       style={{ ...style, position: "relative" }}
     >
       <Link
-        to="/shop"
+        to={linkTo}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
         style={{

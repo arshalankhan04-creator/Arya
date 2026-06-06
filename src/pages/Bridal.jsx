@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, ArrowUpRight } from "lucide-react";
-import { products } from "../data/products";
+import { useProducts } from "../hooks/useProducts";
 import ProductCard from "../components/product/ProductCard";
 import { Link } from "react-router-dom";
 
@@ -14,15 +14,22 @@ const SORT_OPTIONS = [
 export default function Bridal() {
   const [sort, setSort]       = useState("featured");
   const [sortOpen, setSortOpen] = useState(false);
+  const { products, loading } = useProducts();
 
   const bridalProducts = useMemo(() => {
-    let list = products.filter(p => p.isBridal);
+    let list = products.filter(p => p.is_bridal);
     if (sort === "price_asc")  list = [...list].sort((a, b) => a.price - b.price);
     if (sort === "price_desc") list = [...list].sort((a, b) => b.price - a.price);
     return list;
-  }, [sort]);
+  }, [products, sort]);
 
   const currentSort = SORT_OPTIONS.find(o => o.value === sort);
+
+  if (loading) return (
+    <div style={{ minHeight: "100vh", backgroundColor: "#FAF7F2", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "28px", fontWeight: 300, color: "#8A8078" }}>Loading bridal collection…</p>
+    </div>
+  );
 
   return (
     <div style={{ backgroundColor: "#FAF7F2", minHeight: "100vh" }}>

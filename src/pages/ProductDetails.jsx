@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Heart, ShoppingBag, ArrowUpRight, Shield, RefreshCw, Truck, Award } from "lucide-react";
-import { products } from "../data/products";
+import { useProduct, useProducts } from "../hooks/useProducts";
 import { useCart } from "../context/CartContext";
 import { useWishlist } from "../context/WishlistContext";
 import ProductCard from "../components/product/ProductCard";
@@ -65,8 +65,11 @@ export default function ProductDetails() {
   const { addToCart }            = useCart();
   const { toggleWishlist, isWishlisted } = useWishlist();
 
-  const product  = products.find(p => p.id === Number(id));
-  const related  = products.filter(p => p.id !== product?.id && p.category === product?.category).slice(0, 3);
+  const { product, loading, error } = useProduct(id);
+  const { products: allProducts }   = useProducts();
+  const related = allProducts
+    .filter(p => p.id !== product?.id && p.category === product?.category)
+    .slice(0, 3);
 
   const [activeImg,  setActiveImg]  = useState(0);
   const [added,      setAdded]      = useState(false);
@@ -75,7 +78,15 @@ export default function ProductDetails() {
   /* reset image index when product changes */
   useEffect(() => { setActiveImg(0); }, [id]);
 
-  if (!product) {
+  if (loading) return (
+    <div style={{ minHeight: "100vh", backgroundColor: "#FAF7F2", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "28px", fontWeight: 300, color: "#8A8078" }}>
+        Loading…
+      </p>
+    </div>
+  );
+
+  if (error || !product) {
     return (
       <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", backgroundColor: "#FAF7F2", gap: "20px" }}>
         <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "32px", color: "#1A1410" }}>Product not found</p>
@@ -84,8 +95,8 @@ export default function ProductDetails() {
     );
   }
 
-  const discount = product.originalPrice
-    ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
+  const discount = product.original_price
+    ? Math.round(((product.original_price - product.price) / product.original_price) * 100)
     : null;
 
   const handleAddToCart = () => {
@@ -211,10 +222,10 @@ export default function ProductDetails() {
               <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "32px", fontWeight: 300, color: "#1A1410" }}>
                 ₹{product.price.toLocaleString("en-IN")}
               </span>
-              {product.originalPrice && (
+              {product.original_price && (
                 <>
                   <span style={{ fontFamily: "Inter, sans-serif", fontSize: "16px", color: "#B0A090", textDecoration: "line-through" }}>
-                    ₹{product.originalPrice.toLocaleString("en-IN")}
+                    ₹{product.original_price.toLocaleString("en-IN")}
                   </span>
                   <span style={{ fontFamily: "Inter, sans-serif", fontSize: "10px", letterSpacing: "0.12em", backgroundColor: "#FFF0EC", color: "#B76E79", padding: "4px 10px", fontWeight: 600 }}>
                     {discount}% OFF

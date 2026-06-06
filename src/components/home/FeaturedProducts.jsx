@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArrowUpRight, ArrowLeft, ArrowRight } from "lucide-react";
-import { products } from "../../data/products";
+import { useProducts } from "../../hooks/useProducts";
 import ProductCard from "../product/ProductCard";
 
 const CARD_W = 300;   // px per card
@@ -12,8 +12,9 @@ const GAP    = 10;    // px gap
 export default function FeaturedProducts() {
   const trackRef  = useRef(null);
   const [current, setCurrent] = useState(0);
+  const { products, loading } = useProducts();
   const items = products.slice(0, 6);
-  const max   = items.length - 1;
+  const max   = Math.max(0, items.length - 1);
 
   const scrollTo = (idx) => {
     const clamped = Math.max(0, Math.min(idx, max));
@@ -25,6 +26,14 @@ export default function FeaturedProducts() {
       });
     }
   };
+
+  if (loading) return (
+    <section style={{ backgroundColor: "#111009", padding: "100px 48px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "24px", fontWeight: 300, color: "rgba(250,247,242,0.3)", letterSpacing: "0.06em" }}>
+        Loading featured pieces…
+      </p>
+    </section>
+  );
 
   return (
     <section style={{ backgroundColor: "#111009", padding: "100px 0 110px", overflow: "hidden" }}>

@@ -1,7 +1,8 @@
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { SlidersHorizontal, X, ChevronDown, Search, ArrowUpRight } from "lucide-react";
-import { products } from "../data/products";
+import { useProducts } from "../hooks/useProducts";
+import { useSearchParams } from "react-router-dom";
 import ProductCard from "../components/product/ProductCard";
 
 /* ── filter config ───────────────────────────────────────── */
@@ -65,7 +66,14 @@ function FilterSection({ title, children, defaultOpen = true }) {
 
 /* ── main page ───────────────────────────────────────────── */
 export default function Shop() {
-  const [category,  setCategory]  = useState("All");
+  const { products, loading, error } = useProducts();
+  const [searchParams] = useSearchParams();
+
+  // Pre-select category from URL param e.g. /shop?category=Rings
+  const urlCategory = searchParams.get("category");
+  const initialCategory = CATEGORIES.includes(urlCategory) ? urlCategory : "All";
+
+  const [category,  setCategory]  = useState(initialCategory);
   const [material,  setMaterial]  = useState("All");
   const [priceMax,  setPriceMax]  = useState(PRICE_MAX);
   const [sort,      setSort]      = useState("featured");
@@ -106,14 +114,31 @@ export default function Shop() {
     switch (sort) {
       case "price_asc":  list.sort((a, b) => a.price - b.price);   break;
       case "price_desc": list.sort((a, b) => b.price - a.price);   break;
-      case "new":        list = list.filter(p => p.isNew).concat(list.filter(p => !p.isNew)); break;
+      case "new":        list = list.filter(p => p.is_new).concat(list.filter(p => !p.is_new)); break;
       case "best":       list = list.filter(p => p.tag === "Bestseller").concat(list.filter(p => p.tag !== "Bestseller")); break;
       default: break;
     }
     return list;
-  }, [category, material, priceMax, search, sort]);
+  }, [products, category, material, priceMax, search, sort]);
 
   const currentSort = SORT_OPTIONS.find(o => o.value === sort);
+
+  /* ── loading / error states ── */
+  if (loading) return (
+    <div style={{ minHeight: "100vh", backgroundColor: "#FAF7F2", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "28px", fontWeight: 300, color: "#8A8078", letterSpacing: "0.04em" }}>
+        Loading collection…
+      </p>
+    </div>
+  );
+
+  if (error) return (
+    <div style={{ minHeight: "100vh", backgroundColor: "#FAF7F2", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <p style={{ fontFamily: "Inter, sans-serif", fontSize: "13px", color: "#B76E79" }}>
+        Could not load products. Please try again.
+      </p>
+    </div>
+  );
 
   /* ── sidebar content (shared between desktop + drawer) ── */
   const SidebarContent = () => (
